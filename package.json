@@ -1,0 +1,28 @@
+{
+  "name": "nsmock",
+  "version": "0.0.0",
+  "description": "A unit test framework designed for offline testing of SuiteScripts",
+  "main": "jest-configuration/nsMockJestConfiguration.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manbitestech/nsmock.git"
+  },
+  "keywords": [
+    "NetSuite",
+    "SuiteScripts",
+    "jest",
+    "testing"
+  ],
+  "author": "Patrick Byers",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/manbitestech/nsMock/issues"
+  },
+  "homepage": "https://github.com/manbitestech/nsMock#readme",
+  "dependencies": {
+    "@oracle/suitecloud-unit-testing": "^1.7.0"
+  }
+}
