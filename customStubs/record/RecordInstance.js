@@ -7,9 +7,15 @@ class Record {
         this._fields = objData.fields
         this._sublists = objData.sublists || {}
         this._subrecords = objData.subrecords || {}
-    }
-    getValue(opt) {
-        return this._fields[opt.fieldId]?.value
+        this._buildGetValue = function(getText) {
+            const finalKey = getText === true ? 'text' : 'value'
+            const builtFunction = function(opt) {
+                return this._fields[opt.fieldId]?.[finalKey]
+            }
+            return builtFunction
+        }
+        this.getValue = this._buildGetValue(false)
+        this.getText = this._buildGetValue(true)
     }
     getSublistValue(opt) {
         if (opt.sublistId === undefined) {
