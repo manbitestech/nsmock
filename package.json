@@ -24,5 +24,11 @@
   "homepage": "https://github.com/manbitestech/nsMock#readme",
   "dependencies": {
     "@oracle/suitecloud-unit-testing": "^1.7.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.27.1",
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1",
+    "babel-jest": "^30.0.0-beta.3"
   }
 }
