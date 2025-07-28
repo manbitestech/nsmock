@@ -4,8 +4,27 @@ class nsMockRecord {
     constructor (options) {
         this.Type = nsRecordDefault.Type
         this._database = []
+        this._cancreate = {}
         this._preload = function(recordArray) {
-            this._database = this._database.concat(recordArray)
+            recordArray.forEach(rec => {
+                // Needs Type and Id. ID will be unavailable until the record is saved.
+                if (rec.type === undefined || rec.id === undefined) {
+                    throw new Error("Record must have type and id");
+                }
+                this._database.push(rec)
+            })
+        }
+        this._precreate = function(recordArray) {
+            recordArray.forEach(rec => {
+                // Needs Type and Id. ID will be unavailable until the record is saved.
+                if (rec.type === undefined || rec.id === undefined) {
+                    throw new Error("Record must have type and id");
+                }
+                if (this._cancreate[rec.type] === undefined) {
+                    this._cancreate[rec.type] = []
+                }
+                this._cancreate[rec.type].push(rec)
+            })
         }
         
         this.load = function(opt) {
@@ -17,7 +36,19 @@ class nsMockRecord {
                 throw ("Record Not Found")
             }
         }
+        this.create = function(opt) {
+            if (opt.type === undefined) {
+                throw new Error("Type is required to create a record");
+            }
+            if (this._cancreate[opt.type] === undefined) {
+                throw new Error({message: "Record must be initialied with _precreate to create"})
+            }
+            let can = this._cancreate[opt.type].shift()
+            can._id = can.id 
+            can.id = undefined // ID is hidden until saved. 
+            return can
+        }
     }
 }
 
-export default new nsMockRecord()
+module.exports = new nsMockRecord();
