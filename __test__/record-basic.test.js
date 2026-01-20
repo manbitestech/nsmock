@@ -1,5 +1,5 @@
-const Record = require('nsmock/customStubs/record/recordInstance').Record;
-const record = require('nsmock/customStubs/record/record');
+const Record = require('../customStubs/record/RecordInstance').Record;
+const record = require('../customStubs/record/record');
 
 // record-basic.test.js
 
@@ -10,10 +10,10 @@ describe('Record module', () => {
     });
 
     test('Should create a Record instance with given properties', () => {
-        const rec = new Record({ id: 1, name: 'Test' });
+        const rec = new Record({ objData: { header: {id: 1, type: 'test'}, fields: { name: { value: 'Test'}}}});
         expect(rec).toBeInstanceOf(Record);
         expect(rec.id).toBe(1);
-        expect(rec.name).toBe('Test');
+        expect(rec.getValue({fieldId: 'name'})).toBe('Test');
     });
 });
 

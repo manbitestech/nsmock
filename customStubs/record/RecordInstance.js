@@ -92,7 +92,29 @@ Record.sublistsWithSubrecords = {
 }
 
 Record._clone = function(obj) {
-    return JSON.parse(JSON.stringify(obj))
+    if (obj === null || typeof obj !== 'object') {
+        return obj;
+    }
+
+    if (obj instanceof Date) {
+        return new Date(obj.getTime());
+    }
+
+    if (Array.isArray(obj)) {
+        const arrCopy = [];
+        for (let i = 0; i < obj.length; i++) {
+            arrCopy[i] = Record._clone(obj[i]);
+        }
+        return arrCopy;
+    }
+
+    const objCopy = {};
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            objCopy[key] = Record._clone(obj[key]);
+        }
+    }
+    return objCopy;
 }
 
 module.exports = {

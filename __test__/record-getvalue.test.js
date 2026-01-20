@@ -1,6 +1,6 @@
 
-import { Record } from "nsmock/customStubs/record/recordInstance"
-import record from "nsmock/customStubs/record/record"
+import { Record } from "../customStubs/record/RecordInstance"
+import record from "../customStubs/record/record"
 
 /*
 const Record = require('nsmock/customStubs/record/recordInstance').Record;
