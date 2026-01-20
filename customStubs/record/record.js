@@ -41,7 +41,7 @@ class nsMockRecord {
                 throw new Error("Type is required to create a record");
             }
             if (this._cancreate[opt.type] === undefined) {
-                throw new Error({message: "Record must be initialied with _precreate to create"})
+                throw new Error({message: "Record must be initialized with _precreate to create"})
             }
             let can = this._cancreate[opt.type].shift()
             can._id = can.id 
