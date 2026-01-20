@@ -3,8 +3,8 @@ class Record {
     constructor(opt) {
         // Record Setup.
         const {objData} = opt
-        this.type = objData.header.type
-        this.id = objData.header.id
+        this.type = objData.type
+        this.id = objData.id
         this._fields = objData.fields || {}
         this._sublists = objData.sublists || {}
         this._subrecords = objData.subrecords || {}
@@ -115,6 +115,10 @@ Record._clone = function(obj) {
         }
     }
     return objCopy;
+}
+Record._make = function(obj, mergeData){
+    const cloned = Record._clone(obj)
+
 }
 
 module.exports = {

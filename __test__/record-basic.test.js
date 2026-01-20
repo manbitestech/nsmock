@@ -10,7 +10,7 @@ describe('Record module', () => {
     });
 
     test('Should create a Record instance with given properties', () => {
-        const rec = new Record({ objData: { header: {id: 1, type: 'test'}, fields: { name: { value: 'Test'}}}});
+        const rec = new Record({ objData: { id: 1, type: 'test', fields: { name: { value: 'Test'}}}});
         expect(rec).toBeInstanceOf(Record);
         expect(rec.id).toBe(1);
         expect(rec.getValue({fieldId: 'name'})).toBe('Test');

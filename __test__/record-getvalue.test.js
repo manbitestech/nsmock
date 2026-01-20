@@ -2,16 +2,10 @@
 import { Record } from "../customStubs/record/RecordInstance"
 import record from "../customStubs/record/record"
 
-/*
-const Record = require('nsmock/customStubs/record/recordInstance').Record;
-const record = require('nsmock/customStubs/record/record');
-*/
 
 const orderParams = {
-    header: {
-        id: 11211,
-        type: record.Type.SALES_ORDER
-    },
+    id: 11211,
+    type: record.Type.SALES_ORDER,
     fields: {
         memo: {
             value: "Hello Furman"
@@ -27,11 +21,24 @@ const orderParams = {
         ]
     }
 }
-const salesOrder = new Record({objData:orderParams})
-record._preload([salesOrder])
+const orderMerge = {
+    id: 11212,
+    fields: {
+        memo: {
+            value: "Hello Again"
+        },
+    },
+    sublists: {
+        item: [
+            {item:{value: 2343212, text: "SP909A"}}
+        ]
+    }
+}   
 
 describe("simple getValue test", () => {
     it("gets the value of 'memo' field correctly", () => {
+        const salesOrder = new Record({objData:Record._clone(orderParams)})
+        record._preload([salesOrder])
         const order = record.load({id: 11211, type: record.Type.SALES_ORDER})
         const memo = order.getValue({fieldId:'memo'})
         const custId = order.getValue({fieldId: 'entity'})
