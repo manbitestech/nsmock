@@ -21,7 +21,7 @@ class Record {
             if (this.id === undefined && this._id !== undefined) {
                 this.id = this._id // ID is hidden until saved.
             }
-            return this.id
+            return this.id  
         });
         // Methods for Sublists.
         this.getSublistValue = jest.fn(this._buildGetSublistValue(false))
@@ -117,8 +117,32 @@ Record._clone = function(obj) {
     return objCopy;
 }
 Record._make = function(obj, mergeData){
-    const cloned = Record._clone(obj)
-
+    const clone = Record._clone(obj)
+    if (!mergeData || typeof mergeData !== 'object' || Object.keys(mergeData).length == 0){
+        return clone
+    }
+    if (mergeData.id) {
+        clone.id = mergeData.id
+    }
+    if (mergeData.hasOwnProperty("type") && mergeData.type !== clone.type){
+        throw {"message": "Unable to merge across record types"}
+    }
+    const sets = ["fields", "sublists"]
+    for (let k = 0; k < sets.length; k++){
+        const set = sets[k]
+        if (!mergeData.hasOwnProperty(set)){
+            continue
+        }
+        if (!clone[set] || typeof clone[set] !== 'object'){
+            clone[set] = {}
+        }
+        const mergeProperties = Object.keys(mergeData[set])
+        for (let j = 0; j < mergeProperties.length; j++){
+            const e = mergeProperties[j]
+            clone[set][e] = Record._clone(mergeData.fields[e])
+        }
+    }
+    return clone
 }
 
 module.exports = {

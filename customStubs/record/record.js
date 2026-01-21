@@ -30,11 +30,11 @@ class nsMockRecord {
         this.load = function(opt) {
             for (let j = 0; j < this._database.length; j++) {
                 const rec = this._database[j]
-                if (rec.type === opt.type && rec.id === opt.id){
+                if (rec.type === opt.type && rec.id == opt.id){ // ID may be passed in as a string.
                     return rec
                 }
-                throw ("Record Not Found")
             }
+            throw ({"message":"Record Not Found"})
         }
         this.create = function(opt) {
             if (opt.type === undefined) {

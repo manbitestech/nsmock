@@ -21,25 +21,23 @@ const orderParams = {
         ]
     }
 }
-const orderMerge = {
-    id: 11212,
+const merge = {
+    id: 11219,
     fields: {
-        memo: {
-            value: "Hello Again"
-        },
+        entity: {
+            value: 999329,
+            text: "The Other Bureau"
+        }
     },
-    sublists: {
-        item: [
-            {item:{value: 2343212, text: "SP909A"}}
-        ]
-    }
-}   
+}
+const salesOrder = new Record({objData: Record._make(orderParams)});
+const salesOrder2 = new Record({objData: Record._make(orderParams, merge)})
+record._preload([salesOrder, salesOrder2])
 
 describe("simple getValue test", () => {
     it("gets the value of 'memo' field correctly", () => {
-        const salesOrder = new Record({objData:Record._clone(orderParams)})
-        record._preload([salesOrder])
         const order = record.load({id: 11211, type: record.Type.SALES_ORDER})
+        const order2 = record.load({id: 11219, type: record.Type.SALES_ORDER})
         const memo = order.getValue({fieldId:'memo'})
         const custId = order.getValue({fieldId: 'entity'})
         const custName = order.getText({fieldId: 'entity'})
@@ -51,6 +49,15 @@ describe("simple getValue test", () => {
 
         const skuId = order.getSublistValue({sublistId: 'item', fieldId: 'item', line: 0})
         expect(skuId).toBe(2343212)
+        order.setValue({fieldId: 'memo', value: 'New Memo'})
+        expect(order.getValue({fieldId: 'memo'})).toBe('New Memo')
+        order.setValue({fieldId: 'location', value: 11})
+        expect(order.getValue({fieldId: 'location'})).toBe(11)
+        const outputId = order.save()
+        expect(outputId).toBe(11211)
+
+        expect(order2.getValue({fieldId: 'memo'})).toBe('Hello Furman')
+        expect(order2.getValue({fieldId: 'entity'})).toBe(999329)
     })
 })
 
