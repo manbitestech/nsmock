@@ -11,6 +11,10 @@ const CUSTOM_STUBS = [
         module: 'N/record/instance',
         path: `<rootDir>/node_modules/${CUSTOM_STUBS_PATH}/record/RecordInstance.js`
     },
+    {
+        module: 'N/search',
+        path: `<rootDir>/node_modules/${CUSTOM_STUBS_PATH}/search/search.js`
+    }
 ]
 
 module.exports = CUSTOM_STUBS
