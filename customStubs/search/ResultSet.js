@@ -1,27 +1,32 @@
-
 class ResultSet {
-    _counter = 0;
-    count = 0;
-    constructor(opt) {
-        this._resultValues = opt || [];
-        this.count = this._resultValues.length;
+    constructor(results) {
+        this.results = results || [];
+    }
+
+    /**
+     * Iterates over each result in the set.
+     * @param {function} callback - The function to call for each result.
+     *   The callback receives a mock 'Result' object.
+     */
+    each(callback) {
+        for (const result of this.results) {
+            // The callback returns `true` to continue, `false` to stop.
+            if (callback(result) === false) {
+                break;
+            }
+        }
+    }
+
+    /**
+     * Gets a range of results.
+     * @param {Object} options - Options containing start and end index.
+     * @returns {Array<Object>} A slice of the results array.
+     */
+    getRange(options) {
+        const start = options.start || 0;
+        const end = options.end || 1000;
+        return this.results.slice(start, end);
     }
 }
 
-each = jest.fn(function(callback) {
-    for (let i = 0; i < this._resultValues.length; i++) {
-        const row = this._resultValues[i];
-        const rowObj = {
-            id: row.id,
-            getValue: function(fieldId) {
-                // todo: some rigamarole was here about stored objects or arrays. Is it needed?
-                return resultRow.values[fieldId];
-            }
-        }
-        const retVal = callback(rowObj)
-        if (retVal !== true) {
-            break; // stop iteration if callback returns false
-        }
-        callback(rec, i);
-    }   
-})
+module.exports = ResultSet;
