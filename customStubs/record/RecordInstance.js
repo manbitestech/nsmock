@@ -116,7 +116,7 @@ Record._clone = function(obj) {
     }
     return objCopy;
 }
-Record._make = function(obj, mergeData){
+Record._cleanJson = function(obj, mergeData){
     const clone = Record._clone(obj)
     if (!mergeData || typeof mergeData !== 'object' || Object.keys(mergeData).length == 0){
         return clone

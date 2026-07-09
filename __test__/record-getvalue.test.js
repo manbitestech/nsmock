@@ -30,8 +30,8 @@ const merge = {
         }
     },
 }
-const salesOrder = new Record({objData: Record._make(orderParams)});
-const salesOrder2 = new Record({objData: Record._make(orderParams, merge)})
+const salesOrder = new Record({objData: Record._cleanJson(orderParams)});
+const salesOrder2 = new Record({objData: Record._cleanJson(orderParams, merge)})
 record._preload([salesOrder, salesOrder2])
 
 describe("simple getValue test", () => {
