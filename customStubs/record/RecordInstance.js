@@ -61,7 +61,33 @@ class Record {
 
             return this; // NetSuite returns the record object for chaining
         });
+        
+        this.findSublistLineWithValue = jest.fn(function(options) {
+            if (typeof options !== 'object' || Array.isArray(options)) {
+                throw {message: "Not Implemented: Serial Parameters for record.findSublistLineWithValue. Use JSON input."}
+            }
+            const { sublistId, fieldId, value } = options;
+
+            if (!sublistId) throw new Error('SSS_MISSING_REQD_ARGUMENT: sublistId');
+            if (!fieldId) throw new Error('SSS_MISSING_REQD_ARGUMENT: fieldId');
+            if (!value) throw new Error('SSS_MISSING_REQD_ARGUMENT: value');
+
+            if (noInput(sublistId) || noInput(fieldId) || noInput(value, true)){
+                throw({message: "findSublistLineWithValue must be called with sublistId, fieldId, and value."})
+            }
+            const targetSublist = this._sublists[sublistId]
+            if (targetSublist && targetSublist.length > 0) {
+                for (let j = 0; j < targetSublist.length; j++) {
+                    const currentLine = targetSublist[j]
+                    if (currentLine[fieldId]?.value == value) { // flexible NetSuite 'truthy' equivalence.
+                        return j
+                    }
+                }
+            }
+            return -1
+        })
     }
+
     _buildGetValue = function(getText) {
             const finalKey = getText === true ? 'text' : 'value'
             return function(opt) {
