@@ -98,6 +98,51 @@ class Record {
 
             return this; // NetSuite returns the record object for chaining
         });
+
+
+        this.selectLine = jest.fn(function() {
+            let sublistId
+            let line
+            this._enforceDynamic("selectLine", true)
+            if (typeof arguments[0] === 'object') {
+                sublistId = arguments[0].sublistId
+                line = arguments[0].line
+            } else {
+                sublistId = arguments[0]
+                line = arguments[1]
+            }
+            this._currentLineMarker[sublistId] = line
+        })
+        this.selectNewLine = jest.fn(function() {
+            let sublistId
+            this._enforceDynamic("selectNewLine", true)
+            if (typeof arguments[0] === 'object') {
+                sublistId = arguments[0].sublistId
+            } else {
+                sublistId = arguments[0]
+            }
+            // todo: Initialize a new object that can be modified and stored as a sublist line (commit line).
+        })
+        commitLine = jest.fn()
+
+        this.removeLine = jest.fn(function(...args){
+            const {sublistId, line} = args[0]
+            if (!sublistId || line === undefined) {
+                throw {"message": "removeLine: Input must include sublistId and line."}
+            }
+
+            const sublist = this._recordValues.sublists[sublistId]
+            if (!Array.isArray(sublist)) {
+                throw {"message": "removeLine: Record sublist not initialized in nsMock object"}
+            }
+            if ((line + 1) > sublist.length) {
+                throw {"message": "removeLine: Line does not exist in sublist"}
+            }
+            sublist.splice(line, 1)
+        })
+        this.setSublistValue = jest.fn(this._buildSetSublistValue())
+        this.setCurrentSublistValue = jest.fn()
+
         
         this.findSublistLineWithValue = jest.fn(function(options) {
             if (typeof options !== 'object' || Array.isArray(options)) {
@@ -135,11 +180,17 @@ class Record {
     }
 
     _buildGetValue = function(getText) {
-            const finalKey = getText === true ? 'text' : 'value'
-            return function(opt) {
-                return this._fields[opt.fieldId]?.[finalKey]
+        const finalKey = getText === true ? 'text' : 'value'
+        return function(opt) {
+            // possible 
+            if (typeof arguments[0] === 'object') {
+                fieldId = arguments[0].fieldId
+            } else {
+                fieldId = arguments[0]
             }
+            return this._fields[opt.fieldId]?.[finalKey]
         }
+    }
     _buildGetSublistValue(getText) {
         return function(opt) {
             const finalKey = getText === true ? 'text' : 'value'
