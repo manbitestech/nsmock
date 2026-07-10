@@ -19,10 +19,10 @@ class ResultSet {
         id: resultRow.id,
         getValue: fieldId => {
           const isFieldArray = Array.isArray(resultRow.values[fieldId])
-          let isFieldObject = typeof resultRow.values[fieldId] === 'object' && resultRow.values[fieldId][0]
+          let isFieldObject = typeof resultRow.values[fieldId] === 'object' && resultRow.values[fieldId][0].hasOwnProperty('value')
 
           if(isFieldArray) {
-            isFieldObject = typeof resultRow.values[fieldId][0] === 'object' && resultRow.values[fieldId][0]
+            isFieldObject = typeof resultRow.values[fieldId][0] === 'object' && resultRow.values[fieldId][0].hasOwnProperty('value')
           }
 
           if(isFieldArray && isFieldObject) {
