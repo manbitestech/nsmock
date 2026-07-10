@@ -18,6 +18,9 @@ class Record {
         this.getText = this._buildGetValue(true)
         this.setValue = jest.fn(this._buildSetValue())
         this.save = jest.fn(function() {
+            if (this.isSubrecord === true) {
+                throw {"message": "Unable to save subrecord"}
+            }
             if (this.id === undefined && this._id !== undefined) {
                 this.id = this._id // ID is hidden until saved.
             }
@@ -63,6 +66,11 @@ class Record {
                 })
             }
             throw {message: "subrecord JSON not correctly set up within sublist line. "}
+        })
+        this.getCurrentSublistSubrecord = jest.fn(function() {
+            this._enforceDynamic("getCurrentSublistSubrecord", true)
+            // todo: make this pull from the actual subrecord, same as the other 'getCurrent' functions.
+            return new Record(undefined, {isSubrecord: true})
         })
 
         this.insertLine = jest.fn(function(options) {
@@ -115,6 +123,15 @@ class Record {
             }
             return -1
         })
+
+        this._enforceDynamic = function(functionName, dynamicTrue=true) {
+            const isError = (dynamicTrue === true && !this.isDynamic) ||
+                (dynamicTrue === false && this.isDynamic)
+            const qualifier = dynamicTrue ? "only" : "not"
+            if (isError) {
+                throw {message: functionName + " is " + qualifier + " supported in dynamic mode"}
+            }
+        }
     }
 
     _buildGetValue = function(getText) {
@@ -141,6 +158,17 @@ class Record {
             }
             return targetSublist[opt.line]?.[opt.fieldId]?.[finalKey]
         };
+    }
+    _buildGetCurrentSublistOutput = function(isText) {
+        const finalKey = isText ? 'text' : 'value'
+        const functionName = isText ? 'getCurrentSublistText' : 'getCurrentSublistValue'
+        const outputFn = sublistQueryInput => {
+            // todo: adapt to serial params input (alternate to JSON)
+            this._enforceDynamic(functionName, true)
+            const currentLineNumber = this._currentLineMarker[sublistQueryInput.sublistId]
+            return this._sublists[sublistQueryInput.sublistId]?.[currentLineNumber]?.[sublistQueryInput.fieldId]?.[finalKey]
+        }
+        return outputFn
     }
     _buildSetValue() {
         // Ability to later add a setText method
