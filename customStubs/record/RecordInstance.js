@@ -28,14 +28,43 @@ class Record {
         this.getSublistText = jest.fn(this._buildGetSublistValue(true))
         this.setSublistValue = jest.fn() // todo: store values
         this.getLineCount = jest.fn(function(opt){
-            if (opt.sublistId === undefined) {
+            const {sublistId} = opt
+            if (sublistId === undefined) {
                 throw {"message": "sublistId not supplied"}
             }
-            if (this._sublists[opt.sublistId] === undefined) {
+            if (this._sublists[sublistId] === undefined) {
                 throw {"message": "sublist not initialized in test setup"}
             }
-            return this._sublists[opt.sublistId].length
+            return this._sublists[sublistId].length
         })
+
+        this.getSublistSubrecord = jest.fn(function(options) {
+            if (typeof options !== 'object' || Array.isArray(options)) {
+                throw {message: "Not Implemented: Serial Parameters for record.getSublistSubrecord. Use JSON input."}
+            }
+            const { sublistId, fieldId, value } = options;
+
+            if (!sublistId) throw new Error('SSS_MISSING_REQD_ARGUMENT: sublistId');
+            if (!fieldId) throw new Error('SSS_MISSING_REQD_ARGUMENT: fieldId');
+            if (!value) throw new Error('SSS_MISSING_REQD_ARGUMENT: value');
+
+            // this._enforceDynamic("getSublistSubrecord", false)
+            if(typeof arguments[0] === 'object'){
+                sublistId = arguments[0].sublistId
+                fieldId = arguments[0].fieldId
+                line = arguments[0].line
+            } else {
+                throw "Serial params not implemented for getSublistSubrecord"
+            }
+            const source = this._recordValues.sublists[sublistId][line]?.[fieldId].subrecord
+            if (source){
+                return new Record(source, {
+                    isSubrecord: true
+                })
+            }
+            throw {message: "subrecord JSON not correctly set up within sublist line. "}
+        })
+
         this.insertLine = jest.fn(function(options) {
             if (typeof arguments[0] !== 'object' || Array.isArray(arguments[0])) {
                 throw {message: "Not Implemented: Serial Parameters for record.insertLine. Use JSON input."}
@@ -103,14 +132,14 @@ class Record {
             if (opt.fieldId === undefined) {
                 throw {"message": "fieldId not supplied"}
             }
-            if (typeof opt.line !== 'number') {
+            if (typeof parseInt(opt.line) !== 'number') {
                 throw {"message": "line not supplied or non-numerical"}
             }
-            const sub = this._sublists[opt.sublistId];
-            if (sub === undefined) {
+            const targetSublist = this._sublists[opt.sublistId];
+            if (targetSublist === undefined) {
                 throw "Sublist not initialized.";
             }
-            return sub[opt.line]?.[opt.fieldId]?.[finalKey]
+            return targetSublist[opt.line]?.[opt.fieldId]?.[finalKey]
         };
     }
     _buildSetValue() {
