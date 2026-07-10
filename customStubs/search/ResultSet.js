@@ -1,32 +1,53 @@
 class ResultSet {
-    constructor(results) {
-        this.results = results || [];
-    }
+  _counter = 0
+  count = 0
 
-    /**
-     * Iterates over each result in the set.
-     * @param {function} callback - The function to call for each result.
-     *   The callback receives a mock 'Result' object.
-     */
-    each(callback) {
-        for (const result of this.results) {
-            // The callback returns `true` to continue, `false` to stop.
-            if (callback(result) === false) {
-                break;
-            }
+  /**
+   * Outputs a mock object with an instance.each method that can iterate and return the search results line by line
+   * @param {Array} inputJson Array of records to be output. JSON structure given above.
+   * Please see 'nsmock-oop-test' and other tests for examples of usage.
+   */
+  constructor (inputJson) {
+    this._resultValues = inputJson || []
+    this.count = this._resultValues.length
+  }
+
+  each = jest.fn(function(func) {
+    for (let k = 0; k < this._resultValues.length; k++) {
+      const resultRow = this._resultValues[k]
+      const resultObj = {
+        id: resultRow.id,
+        getValue: fieldId => {
+          const isFieldArray = Array.isArray(resultRow.values[fieldId])
+          let isFieldObject = typeof resultRow.values[fieldId] === 'object' && resultRow.values[fieldId][0]
+
+          if(isFieldArray) {
+            isFieldObject = typeof resultRow.values[fieldId][0] === 'object' && resultRow.values[fieldId][0]
+          }
+
+          if(isFieldArray && isFieldObject) {
+            return resultRow.values[fieldId][0].value
+          }
+          else if (isFieldArray && !isFieldObject) {
+            return resultRow.values[fieldId][0]
+          }
+          else if (isFieldObject && !isFieldArray) {
+            return resultRow.values[fieldId].value
+          }
+
+          return resultRow.values[fieldId]
         }
+      }
+      const retVal = func(resultObj)
+      if (retVal !== true) {
+        break
+      }
     }
-
-    /**
-     * Gets a range of results.
-     * @param {Object} options - Options containing start and end index.
-     * @returns {Array<Object>} A slice of the results array.
-     */
-    getRange(options) {
-        const start = options.start || 0;
-        const end = options.end || 1000;
-        return this.results.slice(start, end);
-    }
+  })
+  asMappedResults = jest.fn(() => {
+    return this._resultValues;
+  })
 }
+
 
 module.exports = ResultSet;
