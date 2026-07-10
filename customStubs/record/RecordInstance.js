@@ -36,17 +36,31 @@ class Record {
             }
             return this._sublists[opt.sublistId].length
         })
-        this.insertLine = jest.fn(function(opt) {
-            if (opt.sublistId === undefined) {
-                throw {"message": "sublistId not supplied"}
-            } 
-            if (this._sublists[opt.sublistId] === undefined) {
-                this._sublists[opt.sublistId] = []
+        this.insertLine = jest.fn(function(options) {
+            if (typeof arguments[0] !== 'object' || Array.isArray(arguments[0])) {
+                throw {message: "Not Implemented: Serial Parameters for record.insertLine. Use JSON input."}
             }
-            const insertedLine = {}
-            // todo: if it is a subrecord, we need to create a new record instance
-            this._sublists[opt.sublistId].splice(opt.line, 0, insertedLine)
-        })
+            const { sublistId, line, doSublistSourcing = false } = options;
+
+            if (!sublistId) throw new Error('SSS_MISSING_REQD_ARGUMENT: sublistId');
+            if (typeof line !== 'number' || line < 0) throw new Error('INVALID_LINE_NUMBER');
+
+            // todo: STRICT VALIDATION: Reject truly invalid sublist IDs
+
+            // 2. LAZY DATA INIT: Auto-create array if this valid sublist hasn't been touched yet
+            if (!this._sublists[sublistId]) {
+                this._sublists[sublistId] = [];
+            }
+
+            const newLine = {};
+            this._sublists[sublistId].splice(line, 0, newLine);
+
+            if (doSublistSourcing) {
+                // optional validation for sublist sourcing.
+            }
+
+            return this; // NetSuite returns the record object for chaining
+        });
     }
     _buildGetValue = function(getText) {
             const finalKey = getText === true ? 'text' : 'value'
