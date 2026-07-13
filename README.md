@@ -64,7 +64,7 @@ describe("simple getValue test", () => {
 
 ## Companion Project
 
-For a more detailed and practical example of how to use `nsmock`, check out the companion project: [nsmock-usage-testing](https://github.com/manbitestech/nsmock-usage-testing).
+For a more detailed and practical example of how to use `nsmock`, check out the companion project: [usage-testing](https://github.com/manbitestech/nsmock-usage-testing).
 
 ## Repository
 
