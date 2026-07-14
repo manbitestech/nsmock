@@ -15,9 +15,14 @@ class ResultSet {
   each = jest.fn(function(func) {
     for (let k = 0; k < this._resultValues.length; k++) {
       const resultRow = this._resultValues[k]
+      const resolveField = (field) => typeof field === 'string' ? field : field.name;
       const resultObj = {
         id: resultRow.id,
-        getValue: fieldId => {
+        getValue: field => {
+          const fieldId = resolveField(field)
+          if (typeof resultRow.getValue === 'function') {
+            return resultRow.getValue(fieldId)
+          }
           const isFieldArray = Array.isArray(resultRow.values[fieldId])
           let isFieldObject = typeof resultRow.values[fieldId] === 'object' && resultRow.values[fieldId][0].hasOwnProperty('value')
 
@@ -35,6 +40,13 @@ class ResultSet {
             return resultRow.values[fieldId].value
           }
 
+          return resultRow.values[fieldId]
+        },
+        getText: field => {
+          const fieldId = resolveField(field)
+          if (typeof resultRow.getText === 'function') {
+            return resultRow.getText(fieldId)
+          }
           return resultRow.values[fieldId]
         }
       }

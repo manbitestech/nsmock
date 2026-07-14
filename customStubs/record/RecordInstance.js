@@ -140,9 +140,18 @@ class Record {
             }
             sublist.splice(line, 1)
         })
-        this.setSublistValue = jest.fn(this._buildSetSublistValue())
         this.setCurrentSublistValue = jest.fn()
-
+        this._buildSetSublistValue = function (isText){
+            const finalKey = 'value' // todo: support 'text'
+            return function(opt) {
+                const {fieldId, sublistId, line, value} = opt
+                if (this._sublists[sublistId][line] === undefined) {
+                    this._sublists[sublistId][line] = {}
+                }
+                this._sublists[sublistId][line][fieldId] = {[finalKey]: value}
+            }
+        }
+        this.setSublistValue = jest.fn(this._buildSetSublistValue())
         
         this.findSublistLineWithValue = jest.fn(function(options) {
             if (typeof options !== 'object' || Array.isArray(options)) {
@@ -183,6 +192,7 @@ class Record {
         const finalKey = getText === true ? 'text' : 'value'
         return function(opt) {
             // possible 
+            let fieldId
             if (typeof arguments[0] === 'object') {
                 fieldId = arguments[0].fieldId
             } else {
