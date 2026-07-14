@@ -1,5 +1,6 @@
 
 const nsRecordDefault = require('@oracle/suitecloud-unit-testing/stubs/record/record')
+const {Record} = require('./RecordInstance')
 
 class nsMockRecord {
     constructor (options) {
@@ -29,8 +30,8 @@ class nsMockRecord {
     _precreate(recordArray) {
         recordArray.forEach(rec => {
             // Needs Type and Id. ID will be unavailable until the record is saved.
-            if (rec.type === undefined || rec.id === undefined) {
-                throw new Error("Record must have type and id");
+            if (rec.type === undefined || rec._id === undefined) {
+                throw new Error("Record must have type and hidden id ('_id:1234')");
             }
 
             if (this._cancreate[rec.type] === undefined) {
@@ -60,18 +61,17 @@ class nsMockRecord {
             throw new Error("Type is required to create a record");
         }
 
-        if (this._cancreate[opt.type] === undefined) {
+        const canCreateWithinType = this._cancreate[opt.type]
+        if (!canCreateWithinType || canCreateWithinType.length === 0) {
             throw new Error({message: "Record must be initialized with _precreate to create"})
         }
+        const outputRec = this._cancreate[opt.type].shift()
 
-        let can = this._cancreate[opt.type].shift()
-        can._id = can.id 
-        can.id = undefined // ID is hidden until saved. 
-        return can
+        return outputRec
     }
 }
 
 
-module.exports = new nsMockRecord();
+module.exports = new nsMockRecord(); // instantiated singleton; name it 'record'.
 
 

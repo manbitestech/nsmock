@@ -5,6 +5,7 @@ class Record {
         const {objData} = opt
         this.type = objData.type
         this.id = objData.id
+        this._id = objData._id
         this._fields = objData.fields || {}
         this._sublists = objData.sublists || {}
         this._subrecords = objData.subrecords || {}
