@@ -226,7 +226,7 @@ class Record {
             } else {
                 fieldId = arguments[0]
             }
-            return this._fields[opt.fieldId]?.[finalKey]
+            return this._fields[fieldId]?.[finalKey]
         }
     }
     _buildGetSublistValue(getText) {

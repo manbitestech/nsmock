@@ -54,8 +54,6 @@ class nsMockRecord {
         throw ({"message":"Record Not Found"})
     }
 
-
-
     create(opt) {
         if (opt.type === undefined) {
             throw new Error("Type is required to create a record");
@@ -68,6 +66,11 @@ class nsMockRecord {
         const outputRec = this._cancreate[opt.type].shift()
         if (opt.isDynamic === true){
             outputRec._setDynamic(true)
+        }
+        if (opt.defaultValues) {
+            Object.keys(opt.defaultValues).forEach(fieldId => {
+            outputRec._fields[fieldId] = { value: opt.defaultValues[fieldId] }
+            })
         }
 
         return outputRec
