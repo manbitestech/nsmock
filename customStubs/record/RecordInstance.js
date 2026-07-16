@@ -9,6 +9,8 @@ class Record {
         this._fields = objData.fields || {}
         this._sublists = objData.sublists || {}
         this._subrecords = objData.subrecords || {}
+        this._currentLineMarker = {}
+        this._pendingLine = {}
         // Utility methods and properties related to nsmock framework.
         this._isDynamic = false;
         this._setDynamic = function(bool) {
@@ -25,7 +27,7 @@ class Record {
             if (this.id === undefined && this._id !== undefined) {
                 this.id = this._id // ID is hidden until saved.
             }
-            return this.id  
+            return this.id
         });
         // Methods for Sublists.
         this.getSublistValue = jest.fn(this._buildGetSublistValue(false))
@@ -122,9 +124,26 @@ class Record {
             } else {
                 sublistId = arguments[0]
             }
-            // todo: Initialize a new object that can be modified and stored as a sublist line (commit line).
+            if (!this._sublists[sublistId]) {
+                this._sublists[sublistId] = []
+            }
+            this._pendingLine[sublistId] = {}
+            this._currentLineMarker[sublistId] = this._sublists[sublistId].length
         })
-        commitLine = jest.fn()
+        this.commitLine = jest.fn(function() {
+            let sublistId
+            if (typeof arguments[0] === 'object') {
+                sublistId = arguments[0].sublistId
+            } else {
+                sublistId = arguments[0]
+            }
+            if (!this._sublists[sublistId]) {
+                this._sublists[sublistId] = []
+            }
+            this._sublists[sublistId].push(this._pendingLine[sublistId])
+            this._pendingLine[sublistId] = null
+            return this
+        })
 
         this.removeLine = jest.fn(function(...args){
             const {sublistId, line} = args[0]
@@ -132,7 +151,7 @@ class Record {
                 throw {"message": "removeLine: Input must include sublistId and line."}
             }
 
-            const sublist = this._recordValues.sublists[sublistId]
+            const sublist = this._sublists[sublistId]
             if (!Array.isArray(sublist)) {
                 throw {"message": "removeLine: Record sublist not initialized in nsMock object"}
             }
@@ -141,7 +160,15 @@ class Record {
             }
             sublist.splice(line, 1)
         })
-        this.setCurrentSublistValue = jest.fn()
+        this.setCurrentSublistValue = jest.fn((...args) => {
+            this._enforceDynamic("setCurrentSublistValue", true)
+            const { sublistId, fieldId, value } = typeof args[0] === 'object' ? 
+                args[0] : {sublistId:args[0], fieldId:args[1], value:args[2]}
+            if (!this._pendingLine[sublistId]) {
+                this._pendingLine[sublistId] = {}
+            }
+            this._pendingLine[sublistId][fieldId] = { value: value }
+        })
         this._buildSetSublistValue = function (isText){
             const finalKey = 'value' // todo: support 'text'
             return function(opt) {
@@ -153,7 +180,7 @@ class Record {
             }
         }
         this.setSublistValue = jest.fn(this._buildSetSublistValue())
-        
+
         this.findSublistLineWithValue = jest.fn(function(options) {
             if (typeof options !== 'object' || Array.isArray(options)) {
                 throw {message: "Not Implemented: Serial Parameters for record.findSublistLineWithValue. Use JSON input."}
@@ -192,7 +219,7 @@ class Record {
     _buildGetValue = function(getText) {
         const finalKey = getText === true ? 'text' : 'value'
         return function(opt) {
-            // possible 
+            // possible
             let fieldId
             if (typeof arguments[0] === 'object') {
                 fieldId = arguments[0].fieldId
@@ -241,7 +268,7 @@ class Record {
             this._fields[opt.fieldId].value = opt.value;
         }
     }
-    
+
 }
 
 Record.sublistsWithSubrecords = {
