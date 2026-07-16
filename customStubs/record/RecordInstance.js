@@ -12,7 +12,7 @@ class Record {
         // Utility methods and properties related to nsmock framework.
         this._isDynamic = false;
         this._setDynamic = function(bool) {
-            this.isDynamic = bool;
+            this._isDynamic = bool;
         }
         // Methods for Record body.
         this.getValue = this._buildGetValue(false)
@@ -180,8 +180,8 @@ class Record {
         })
 
         this._enforceDynamic = function(functionName, dynamicTrue=true) {
-            const isError = (dynamicTrue === true && !this.isDynamic) ||
-                (dynamicTrue === false && this.isDynamic)
+            const isError = (dynamicTrue === true && !this._isDynamic) ||
+                (dynamicTrue === false && this._isDynamic)
             const qualifier = dynamicTrue ? "only" : "not"
             if (isError) {
                 throw {message: functionName + " is " + qualifier + " supported in dynamic mode"}

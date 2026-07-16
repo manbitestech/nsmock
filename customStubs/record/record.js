@@ -66,6 +66,9 @@ class nsMockRecord {
             throw new Error({message: "Record must be initialized with _precreate to create"})
         }
         const outputRec = this._cancreate[opt.type].shift()
+        if (opt.isDynamic === true){
+            outputRec._setDynamic(true)
+        }
 
         return outputRec
     }
