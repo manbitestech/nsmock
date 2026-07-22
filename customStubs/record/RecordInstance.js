@@ -72,6 +72,44 @@ class Record {
             return new Record(undefined, {isSubrecord: true})
         })
 
+        this.createCurrentSublistSubrecord = jest.fn(function(options) {
+            this._enforceDynamic("createCurrentSublistSubrecord", true)
+            const { sublistId, fieldId } = options;
+
+            if (!sublistId) throw new Error('SSS_MISSING_REQD_ARGUMENT: sublistId');
+            if (!fieldId) throw new Error('SSS_MISSING_REQD_ARGUMENT: fieldId');
+
+            const currentLineNumber = this._currentLineMarker[sublistId];
+            if (currentLineNumber === undefined) {
+                throw { message: "No line selected for sublist: " + sublistId };
+            }
+
+            // Ensure the sublist exists
+            if (!this._sublists[sublistId]) {
+                this._sublists[sublistId] = [];
+            }
+
+            // Ensure the line exists (pending line from selectNewLine)
+            if (!this._sublists[sublistId][currentLineNumber]) {
+                this._sublists[sublistId][currentLineNumber] = this._pendingLine[sublistId] || {};
+            }
+
+            // Create the subrecord structure
+            const newSubrecord = {
+                fields: {}
+            };
+
+            this._sublists[sublistId][currentLineNumber][fieldId] = {
+                value: null,
+                subrecord: newSubrecord
+            };
+
+            // Return a new Record instance for the subrecord
+            const rec = new Record({ objData: newSubrecord });
+            rec._setSubrecord(true);
+            return rec;
+        })
+
         this.insertLine = jest.fn(function(options) {
             if (typeof arguments[0] !== 'object' || Array.isArray(arguments[0])) {
                 throw {message: "Not Implemented: Serial Parameters for record.insertLine. Use JSON input."}
