@@ -16,12 +16,16 @@ class Record {
         this._setDynamic = function(bool) {
             this._isDynamic = bool;
         }
+        this._isSubrecord = false;
+        this._setSubrecord = function(bool) {
+            this._isSubrecord = bool
+        }
         // Methods for Record body.
         this.getValue = this._buildGetValue(false)
         this.getText = this._buildGetValue(true)
         this.setValue = jest.fn(this._buildSetValue())
         this.save = jest.fn(function() {
-            if (this.isSubrecord === true) {
+            if (this._isSubrecord === true) {
                 throw {"message": "Unable to save subrecord"}
             }
             if (this.id === undefined && this._id !== undefined) {
@@ -48,25 +52,17 @@ class Record {
             if (typeof options !== 'object' || Array.isArray(options)) {
                 throw {message: "Not Implemented: Serial Parameters for record.getSublistSubrecord. Use JSON input."}
             }
-            const { sublistId, fieldId, value } = options;
+            const { sublistId, fieldId, line } = options;
 
             if (!sublistId) throw new Error('SSS_MISSING_REQD_ARGUMENT: sublistId');
             if (!fieldId) throw new Error('SSS_MISSING_REQD_ARGUMENT: fieldId');
-            if (!value) throw new Error('SSS_MISSING_REQD_ARGUMENT: value');
+            if (typeof line !== 'number') throw new Error('SSS_MISSING_REQD_ARGUMENT: line');
 
-            // this._enforceDynamic("getSublistSubrecord", false)
-            if(typeof arguments[0] === 'object'){
-                sublistId = arguments[0].sublistId
-                fieldId = arguments[0].fieldId
-                line = arguments[0].line
-            } else {
-                throw "Serial params not implemented for getSublistSubrecord"
-            }
-            const source = this._recordValues.sublists[sublistId][line]?.[fieldId].subrecord
+            const source = this._sublists[sublistId]?.[line]?.[fieldId]?.subrecord
             if (source){
-                return new Record(source, {
-                    isSubrecord: true
-                })
+                const rec = new Record({objData: source})
+                rec._setSubrecord(true)
+                return rec
             }
             throw {message: "subrecord JSON not correctly set up within sublist line. "}
         })
