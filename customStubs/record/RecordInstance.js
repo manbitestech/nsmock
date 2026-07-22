@@ -66,10 +66,25 @@ class Record {
             }
             throw {message: "subrecord JSON not correctly set up within sublist line. "}
         })
-        this.getCurrentSublistSubrecord = jest.fn(function() {
+        this.getCurrentSublistSubrecord = jest.fn(function(options) {
             this._enforceDynamic("getCurrentSublistSubrecord", true)
-            // todo: make this pull from the actual subrecord, same as the other 'getCurrent' functions.
-            return new Record(undefined, {isSubrecord: true})
+            const { sublistId, fieldId } = options;
+
+            if (!sublistId) throw new Error('SSS_MISSING_REQD_ARGUMENT: sublistId');
+            if (!fieldId) throw new Error('SSS_MISSING_REQD_ARGUMENT: fieldId');
+
+            const currentLineNumber = this._currentLineMarker[sublistId];
+            if (currentLineNumber === undefined) {
+                throw { message: "No line selected for sublist: " + sublistId };
+            }
+
+            const source = this._sublists[sublistId]?.[currentLineNumber]?.[fieldId]?.subrecord;
+            if (source) {
+                const rec = new Record({ objData: source });
+                rec._setSubrecord(true);
+                return rec;
+            }
+            throw { message: "subrecord JSON not correctly set up within sublist line." };
         })
 
         this.createCurrentSublistSubrecord = jest.fn(function(options) {
