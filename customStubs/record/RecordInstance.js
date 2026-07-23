@@ -99,22 +99,12 @@ class Record {
                 throw { message: "No line selected for sublist: " + sublistId };
             }
 
-            // Ensure the sublist exists
-            if (!this._sublists[sublistId]) {
-                this._sublists[sublistId] = [];
-            }
-
-            // Ensure the line exists (pending line from selectNewLine)
-            if (!this._sublists[sublistId][currentLineNumber]) {
-                this._sublists[sublistId][currentLineNumber] = this._pendingLine[sublistId] || {};
-            }
-
-            // Create the subrecord structure
+            // Create the subrecord structure on the pending line
             const newSubrecord = {
                 fields: {}
             };
 
-            this._sublists[sublistId][currentLineNumber][fieldId] = {
+            this._pendingLine[sublistId][fieldId] = {
                 value: null,
                 subrecord: newSubrecord
             };
