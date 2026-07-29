@@ -201,13 +201,34 @@ class Record {
         })
         this.setCurrentSublistValue = jest.fn((...args) => {
             this._enforceDynamic("setCurrentSublistValue", true)
-            const { sublistId, fieldId, value } = typeof args[0] === 'object' ? 
+            const { sublistId, fieldId, value } = typeof args[0] === 'object' ?
                 args[0] : {sublistId:args[0], fieldId:args[1], value:args[2]}
             if (!this._pendingLine[sublistId]) {
                 this._pendingLine[sublistId] = {}
             }
             this._pendingLine[sublistId][fieldId] = { value: value }
         })
+
+        this.getCurrentSublistValue = jest.fn(this._buildGetCurrentSublistOutput(false))
+        this.getCurrentSublistText = jest.fn(this._buildGetCurrentSublistOutput(true))
+        this.setCurrentSublistText = jest.fn(this._buildSetCurrentSublistOutput(true))
+
+        this.cancelLine = jest.fn(function(options) {
+            this._enforceDynamic("cancelLine", true)
+            const sublistId = typeof options === 'object' ? options.sublistId : arguments[0]
+            if (!sublistId) throw new Error('SSS_MISSING_REQD_ARGUMENT: sublistId')
+
+            this._pendingLine[sublistId] = null
+            delete this._currentLineMarker[sublistId]
+            return this
+        })
+
+        this.hasSublist = jest.fn(function(options) {
+            const sublistId = typeof options === 'object' ? options.sublistId : arguments[0]
+            if (!sublistId) throw new Error('SSS_MISSING_REQD_ARGUMENT: sublistId')
+            return this._sublists.hasOwnProperty(sublistId)
+        })
+
         this._buildSetSublistValue = function (isText){
             const finalKey = 'value' // todo: support 'text'
             return function(opt) {
@@ -293,11 +314,39 @@ class Record {
         const outputFn = sublistQueryInput => {
             // todo: adapt to serial params input (alternate to JSON)
             this._enforceDynamic(functionName, true)
-            const currentLineNumber = this._currentLineMarker[sublistQueryInput.sublistId]
-            return this._sublists[sublistQueryInput.sublistId]?.[currentLineNumber]?.[sublistQueryInput.fieldId]?.[finalKey]
+            const sublistId = sublistQueryInput.sublistId
+            const fieldId = sublistQueryInput.fieldId
+            if (!sublistId) throw new Error('SSS_MISSING_REQD_ARGUMENT: sublistId')
+            if (!fieldId) throw new Error('SSS_MISSING_REQD_ARGUMENT: fieldId')
+            const currentLineNumber = this._currentLineMarker[sublistId]
+            if (currentLineNumber === undefined) {
+                throw { message: 'No line selected for sublist: ' + sublistId }
+            }
+            return this._sublists[sublistId]?.[currentLineNumber]?.[fieldId]?.[finalKey]
         }
         return outputFn
     }
+    _buildSetCurrentSublistOutput = function(isText) {
+        const valueKey = isText ? 'text' : 'value'
+        const functionName = isText ? 'setCurrentSublistText' : 'setCurrentSublistValue'
+        return function(...args) {
+            this._enforceDynamic(functionName, true)
+            const input = typeof args[0] === 'object' ? args[0] : {
+                sublistId: args[0],
+                fieldId: args[1],
+                [valueKey]: args[2]
+            }
+            const { sublistId, fieldId } = input
+            if (!sublistId) throw new Error('SSS_MISSING_REQD_ARGUMENT: sublistId')
+            if (!fieldId) throw new Error('SSS_MISSING_REQD_ARGUMENT: fieldId')
+            const value = input[valueKey]
+            if (!this._pendingLine[sublistId]) {
+                this._pendingLine[sublistId] = {}
+            }
+            this._pendingLine[sublistId][fieldId] = { [valueKey]: value }
+        }
+    }
+
     _buildSetValue() {
         // Ability to later add a setText method
         return function (opt) {
