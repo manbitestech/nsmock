@@ -4,6 +4,13 @@ A Jest-based unit test framework that enables rapid offline development of NetSu
 
 `nsmock` provides a set of mock objects and a Jest configuration that allows you to test your SuiteScripts in a local environment, without needing to connect to a NetSuite instance. This enables faster development cycles and more robust testing.
 
+## Core Principles. 
+This project is designed to mock NetSuite's native behavior, i.e. real SuiteScript use cases. 
+In all cases, tailor functions and tests to reflect NetSuite's real world behavior.
+`nsmock` is designed to be a developer's tool, not an exact simulation of NetSuite. It does not guarantee your code will work.
+
+
+
 ## Installation
 
 To use `nsmock` in your project, install it as a dev dependency:
@@ -14,7 +21,8 @@ npm install --save-dev nsmock
 
 ## Usage
 
-To use `nsmock`, you need to configure your Jest setup to use its custom stubs. Here's an example of a `jest.config.js` file:
+To use `nsmock`, you need to configure your Jest setup to use its custom stubs. Below is an example of a `jest.config.js` file.
+`nsmock` adds stubs which override the Oracle defaults.
 
 ```javascript
 const SuiteCloudJestConfiguration = require("@oracle/suitecloud-unit-testing");
