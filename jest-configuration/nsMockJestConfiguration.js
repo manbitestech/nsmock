@@ -14,6 +14,18 @@ const CUSTOM_STUBS = [
     {
         module: 'N/search',
         path: `<rootDir>/node_modules/${CUSTOM_STUBS_PATH}/search/search.js`
+    },
+    {
+        module: 'N/error',
+        path: `<rootDir>/node_modules/${CUSTOM_STUBS_PATH}/error/error.js`
+    },
+    {
+        module: 'N/error/suiteScriptError',
+        path: `<rootDir>/node_modules/${CUSTOM_STUBS_PATH}/error/SuiteScriptError.js`
+    },
+    {
+        module: 'N/error/userEventError',
+        path: `<rootDir>/node_modules/${CUSTOM_STUBS_PATH}/error/UserEventError.js`
     }
 ]
 
