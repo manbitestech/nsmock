@@ -23,7 +23,12 @@ class Record {
         // Methods for Record body.
         this.getValue = this._buildGetValue(false)
         this.getText = this._buildGetValue(true)
-        this.setValue = jest.fn(this._buildSetValue())
+        this.setValue = jest.fn(this._buildSetValue(false))
+        /*
+        setText Behavior not currently mocked:
+         - for text fields, setText will default to setting the 'value' attribute 
+        */
+        this.setText = jest.fn(this._buildSetValue(true))
         this.save = jest.fn(function() {
             if (this._isSubrecord === true) {
                 throw {"message": "Unable to save subrecord"}
@@ -347,13 +352,13 @@ class Record {
         }
     }
 
-    _buildSetValue() {
-        // Ability to later add a setText method
+    _buildSetValue(isText) {
+        const valueKey = isText === true ? 'text' : 'value'
         return function (opt) {
             if (this._fields[opt.fieldId] === undefined) {
                 this._fields[opt.fieldId] = {}
             }
-            this._fields[opt.fieldId].value = opt.value;
+            this._fields[opt.fieldId][valueKey] = opt[valueKey];
         }
     }
 
