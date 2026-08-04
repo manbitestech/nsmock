@@ -1,4 +1,4 @@
-const Record = require('../customStubs/record/RecordInstance').Record;
+const Record = require('../customStubs/record/RecordInstance');
 const record = require('../customStubs/record/record');
 
 // record-basic.test.js

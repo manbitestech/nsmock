@@ -432,6 +432,4 @@ Record._cleanJson = function(obj, mergeData){
     return clone
 }
 
-module.exports = {
-    Record
-}
+module.exports = Record

@@ -1,5 +1,5 @@
 
-import { Record } from "../customStubs/record/RecordInstance"
+import Record from "../customStubs/record/RecordInstance"
 import record from "../customStubs/record/record"
 
 

@@ -1,4 +1,4 @@
-const { Record } = require('../customStubs/record/RecordInstance');
+const Record = require('../customStubs/record/RecordInstance');
 
 describe('setText — body field text setter', () => {
     test('should set text on a body field', () => {

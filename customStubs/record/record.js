@@ -1,6 +1,6 @@
 
 const nsRecordDefault = require('@oracle/suitecloud-unit-testing/stubs/record/record')
-const {Record} = require('./RecordInstance')
+const Record = require('./RecordInstance')
 
 class nsMockRecord {
     constructor (options) {

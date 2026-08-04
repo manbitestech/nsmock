@@ -1,4 +1,4 @@
-const { Record } = require('../customStubs/record/RecordInstance');
+const Record = require('../customStubs/record/RecordInstance');
 const record = require('../customStubs/record/record');
 
 describe('record.transform', () => {
