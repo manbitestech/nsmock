@@ -272,13 +272,17 @@ class Record {
         })
 
         this._enforceDynamic = function(functionName, dynamicTrue=true) {
-            const isError = (dynamicTrue === true && !this._isDynamic) ||
-                (dynamicTrue === false && this._isDynamic)
+            const isError = (dynamicTrue === true && !this.isDynamic) ||
+                (dynamicTrue === false && this.isDynamic)
             const qualifier = dynamicTrue ? "only" : "not"
             if (isError) {
                 throw {message: functionName + " is " + qualifier + " supported in dynamic mode"}
             }
         }
+    }
+
+    get isDynamic() {
+        return this._isDynamic;
     }
 
     _buildGetValue = function(getText) {

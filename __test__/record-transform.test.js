@@ -85,7 +85,7 @@ describe('record.transform', () => {
                 isDynamic: true
             });
 
-            expect(salesOrder._isDynamic).toBe(true);
+            expect(salesOrder.isDynamic).toBe(true);
             expect(() => {
                 salesOrder.selectNewLine({ sublistId: 'item' });
             }).not.toThrow();
