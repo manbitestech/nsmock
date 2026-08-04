@@ -21,14 +21,14 @@ describe('Record.isDynamic', () => {
 
     test('should be true when created with isDynamic option', () => {
         const rec = new Record({ objData: { _id: 1, type: 'salesorder' } });
-        record._precreate({ salesorder: [rec] });
+        record._precreate(rec);
         const created = record.create({ type: 'salesorder', isDynamic: true });
         expect(created.isDynamic).toBe(true);
     });
 
     test('should be false when created without isDynamic option', () => {
         const rec = new Record({ objData: { _id: 1, type: 'salesorder' } });
-        record._precreate({ salesorder: [rec] });
+        record._precreate(rec);
         const created = record.create({ type: 'salesorder' });
         expect(created.isDynamic).toBe(false);
     });

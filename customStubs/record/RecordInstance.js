@@ -285,6 +285,10 @@ class Record {
         return this._isDynamic;
     }
 
+    static initType(type) {
+        return new Record({ objData: { type } });
+    }
+
     _buildGetValue = function(getText) {
         const finalKey = getText === true ? 'text' : 'value'
         return function(opt) {
