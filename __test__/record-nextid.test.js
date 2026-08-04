@@ -119,4 +119,32 @@ describe('record._nextId auto-assignment', () => {
             expect(salesOrder.save()).toBe(9000);
         });
     });
+
+    describe('mixed setup pattern', () => {
+        test('should assign ids across mixed precreate/preload calls in push order', () => {
+            record._startId(5000);
+
+            const order1 = Record.initType('salesorder');
+            const order2 = Record.initType('salesorder');
+            const invoice1 = Record.initType('invoice');
+            const customer1 = Record.initType('customer');
+            const customer2 = Record.initType('customer');
+            const invoice2 = Record.initType('invoice');
+
+            record._precreate(order1); // 5000
+            record._precreate([order2, invoice1]); // 5001, 5002
+            record._preload(customer1); // 5003
+            record._preload([customer2, invoice2]); // 5004, 5005
+
+            // _precreate assigns a hidden _id, revealed on save()
+            expect(order1.save()).toBe(5000);
+            expect(order2.save()).toBe(5001);
+            expect(invoice1.save()).toBe(5002);
+
+            // _preload assigns a public id immediately
+            expect(customer1.id).toBe(5003);
+            expect(customer2.id).toBe(5004);
+            expect(invoice2.id).toBe(5005);
+        });
+    });
 });
