@@ -26,6 +26,14 @@ const CUSTOM_STUBS = [
     {
         module: 'N/error/userEventError',
         path: `<rootDir>/node_modules/${CUSTOM_STUBS_PATH}/error/UserEventError.js`
+    },
+    {
+        module: 'N/http',
+        path: `<rootDir>/node_modules/${CUSTOM_STUBS_PATH}/http/http.js`
+    },
+    {
+        module: 'N/https',
+        path: `<rootDir>/node_modules/${CUSTOM_STUBS_PATH}/https/https.js`
     }
 ]
 
