@@ -4,15 +4,18 @@ class nsMockHttps {
     constructor() {
         this._responses = {};
 
-        this._setResponse = (method, url, response) => {
-            const key = `${method}:${url}`;
-            if (!this._responses[key]) {
-                this._responses[key] = [];
-            }
-            this._responses[key].push(response);
+        this._setResponse = (configOrArray) => {
+            const configs = Array.isArray(configOrArray) ? configOrArray : [configOrArray];
+            configs.forEach(({ method, url, response }) => {
+                const key = `${method}:${url}`;
+                if (!this._responses[key]) {
+                    this._responses[key] = [];
+                }
+                this._responses[key].push(response);
+            });
         };
 
-        this._getResponse = (method, url) => {
+        this._getResponse = ({ method, url }) => {
             const queue = this._responses[`${method}:${url}`];
             return queue ? queue.shift() : undefined;
         };
@@ -53,7 +56,7 @@ class nsMockHttps {
         if (!options || !options.url) {
             throw new Error('SSS_MISSING_REQD_ARGUMENT: url');
         }
-        const response = this._getResponse(method, options.url);
+        const response = this._getResponse({ method, url: options.url });
         if (!response) {
             throw new Error(`No response configured for ${method} ${options.url}`);
         }
