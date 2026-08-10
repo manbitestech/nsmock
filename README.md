@@ -88,7 +88,7 @@ The stubs expose underscore-prefixed helpers for seeding state in tests:
 - `record._precreate(recordOrArray)` — register records available for `create()`
 - `record._startId(value)` — set the starting auto-assigned id
 - `record._init()` / `record._clearDb()` — reset state between tests
-- `Record.initType(type)` — create a bare record of a given type
+- `Record._initType(type)` — create a bare record of a given type
 - `search._setResults(type, results)` / `search._clearResults()` — seed search results
 - `http._setResponse(config)` / `https._setResponse(config)` — configure mock responses
 
