@@ -1,6 +1,6 @@
 {
-  "name": "nsmock",
-  "version": "0.0.0",
+  "name": "@manbitestech/nsmock",
+  "version": "0.0.1",
   "description": "A unit test framework designed for offline testing of SuiteScripts",
   "main": "jest-configuration/nsMockJestConfiguration.js",
   "scripts": {
