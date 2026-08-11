@@ -1,6 +1,6 @@
 # @manbitestech/nsmock
 
-A Jest-based unit test framework that enables rapid offline development of NetSuite SuiteScript code.
+NetSuite Unit Testing: `nsmock` is a Jest-based unit test framework that enables rapid offline development of NetSuite SuiteScript code.
 
 `@manbitestech/nsmock` provides a set of mock objects and a Jest configuration that allows you to test your SuiteScripts in a local environment, without needing to connect to a NetSuite instance. This enables faster development cycles and more robust testing.
 
