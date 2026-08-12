@@ -1,5 +1,5 @@
 
-const NSMOCK_PATH = 'nsmock'
+const NSMOCK_PATH = '@manbitestech/nsmock'
 const CUSTOM_STUBS_PATH = `${NSMOCK_PATH}/customStubs`
 
 const CUSTOM_STUBS = [

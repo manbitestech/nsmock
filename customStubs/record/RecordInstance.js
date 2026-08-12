@@ -285,7 +285,7 @@ class Record {
         return this._isDynamic;
     }
 
-    static initType(type) {
+    static _initType(type) {
         return new Record({ objData: { type } });
     }
 

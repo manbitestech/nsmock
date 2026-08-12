@@ -6,9 +6,9 @@ describe('record._nextId auto-assignment', () => {
         record._init();
     });
 
-    describe('Record.initType', () => {
+    describe('Record._initType', () => {
         test('should create a record with a type but no id', () => {
-            const rec = Record.initType('salesorder');
+            const rec = Record._initType('salesorder');
             expect(rec).toBeInstanceOf(Record);
             expect(rec.type).toBe('salesorder');
             expect(rec.id).toBeUndefined();
@@ -16,22 +16,22 @@ describe('record._nextId auto-assignment', () => {
         });
 
         test('should accept record.Type enums', () => {
-            const rec = Record.initType(record.Type.SALES_ORDER);
+            const rec = Record._initType(record.Type.SALES_ORDER);
             expect(rec.type).toBe('salesorder');
         });
     });
 
     describe('_preload', () => {
         test('should assign sequential ids in push order for a single record', () => {
-            const rec = Record.initType('salesorder');
+            const rec = Record._initType('salesorder');
             record._preload(rec);
             expect(rec.id).toBe(1);
             expect(record.load({ type: 'salesorder', id: 1 })).toBe(rec);
         });
 
         test('should assign sequential ids in push order for an array', () => {
-            const a = Record.initType('salesorder');
-            const b = Record.initType('salesorder');
+            const a = Record._initType('salesorder');
+            const b = Record._initType('salesorder');
             record._preload([a, b]);
             expect(a.id).toBe(1);
             expect(b.id).toBe(2);
@@ -53,7 +53,7 @@ describe('record._nextId auto-assignment', () => {
 
     describe('_precreate', () => {
         test('should assign a hidden _id revealed on save for a single record', () => {
-            const rec = Record.initType('salesorder');
+            const rec = Record._initType('salesorder');
             record._precreate(rec);
             const created = record.create({ type: 'salesorder' });
             expect(created._id).toBe(1);
@@ -62,8 +62,8 @@ describe('record._nextId auto-assignment', () => {
         });
 
         test('should assign sequential hidden ids in push order for an array', () => {
-            const a = Record.initType('salesorder');
-            const b = Record.initType('salesorder');
+            const a = Record._initType('salesorder');
+            const b = Record._initType('salesorder');
             record._precreate([a, b]);
             expect(record.create({ type: 'salesorder' }).save()).toBe(1);
             expect(record.create({ type: 'salesorder' }).save()).toBe(2);
@@ -85,8 +85,8 @@ describe('record._nextId auto-assignment', () => {
     describe('record._startId', () => {
         test('should control the starting id for _preload', () => {
             record._startId(9000);
-            const a = Record.initType('salesorder');
-            const b = Record.initType('salesorder');
+            const a = Record._initType('salesorder');
+            const b = Record._initType('salesorder');
             record._preload([a, b]);
             expect(a.id).toBe(9000);
             expect(b.id).toBe(9001);
@@ -94,7 +94,7 @@ describe('record._nextId auto-assignment', () => {
 
         test('should control the starting hidden id for _precreate', () => {
             record._startId(99898);
-            const rec = Record.initType(record.Type.SALES_ORDER);
+            const rec = Record._initType(record.Type.SALES_ORDER);
             record._precreate(rec);
             expect(record.create({ type: record.Type.SALES_ORDER }).save()).toBe(99898);
         });
@@ -104,7 +104,7 @@ describe('record._nextId auto-assignment', () => {
         test('should reset the counter to 1', () => {
             record._startId(9000);
             record._init();
-            const rec = Record.initType('salesorder');
+            const rec = Record._initType('salesorder');
             record._preload(rec);
             expect(rec.id).toBe(1);
         });
@@ -124,12 +124,12 @@ describe('record._nextId auto-assignment', () => {
         test('should assign ids across mixed precreate/preload calls in push order', () => {
             record._startId(5000);
 
-            const order1 = Record.initType('salesorder');
-            const order2 = Record.initType('salesorder');
-            const invoice1 = Record.initType('invoice');
-            const customer1 = Record.initType('customer');
-            const customer2 = Record.initType('customer');
-            const invoice2 = Record.initType('invoice');
+            const order1 = Record._initType('salesorder');
+            const order2 = Record._initType('salesorder');
+            const invoice1 = Record._initType('invoice');
+            const customer1 = Record._initType('customer');
+            const customer2 = Record._initType('customer');
+            const invoice2 = Record._initType('invoice');
 
             record._precreate(order1); // 5000
             record._precreate([order2, invoice1]); // 5001, 5002
